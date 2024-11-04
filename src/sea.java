@@ -1,11 +1,39 @@
 import java.util.HashMap;
 import java.util.Map;
 
+// manages sea of islands & routes between islands
 public class Sea {
+    Map<String, Island> islands;
+
+    public Sea() {
+        islands = new HashMap<>();
+    }
+
+    // add new island to sea of islands
+    public void addIsland(String name, int population) {
+        islands.put(name, new Island(name, population));
+    }
+
+    // add route betwen two islands with travel time
+    public void addRoute(String island1, String island2, double travelTime) {
+        Island fromIsland = islands.get(island1);
+        Island toIsland = islands.get(island2);
+        if (fromIsland != null && toIsland != null) {
+            fromIsland.addRoute(toIsland, travelTime);
+        }
+    }
+
+    public Island getIsland(String name) {
+        return islands.get(name);
+    }
+
     public static void main(String args[]) {
+        Sea sea = new Sea();
+
     }
 }
 
+// represents each island with name, population, resources, and routes to other islands
 class Island {
     private String name;
     private int population;
@@ -40,6 +68,10 @@ class Island {
 
     public int getPopulation() {
         return population;
+    }
+
+    public Map<Island, Double> getRoutes() {
+        return routes;
     }
 
     public Map<String, Integer> getResources() {
