@@ -14,7 +14,7 @@ public class Sea {
         islands.put(name, new Island(name, population));
     }
 
-    // add route betwen two islands with travel time
+    // add route betwen two islands with travel times
     public void addRoute(String island1, String island2, double travelTime) {
         Island fromIsland = islands.get(island1);
         Island toIsland = islands.get(island2);
@@ -30,6 +30,14 @@ public class Sea {
     public static void main(String args[]) {
         Sea sea = new Sea();
 
+        sea.addIsland("Hawaii", 1400000);
+        sea.addIsland("Tahiti", 285900);
+        sea.addIsland("Easter Island", 7750);
+        sea.addIsland("New Zealand", 5338500);
+        sea.addIsland("Samoa", 218000);
+
+        sea.addRoute("Hawaii", "Tahiti", 5.9);
+        sea.addRoute("Tahiti", "Easter Island", 31.58);
     }
 }
 
