@@ -1,4 +1,3 @@
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -9,7 +8,6 @@ public class ResourceDistribution {
     public void distributeResource(Sea sea, Island sourceIsland, String resourceName) {
         // Initialize distances and previous nodes in the shortest paths
         Map<String, Double> distances = new HashMap<>();
-        Map<String, String> previousNodes = new HashMap<>();
 
         // Priority queue for node selection based on distance
         PriorityQueue<NodeDistance> pq = new PriorityQueue<>();
