@@ -17,7 +17,7 @@ public class Sea {
         islands.put(island.getName(), island);
     }
 
-    // add route betwen two islands with travel time
+    // add route between two islands with travel time
     public void addRoute(String island1, String island2, double travelTime) {
         Island fromIsland = islands.get(island1);
         Island toIsland = islands.get(island2);

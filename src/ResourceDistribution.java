@@ -26,10 +26,67 @@ public class ResourceDistribution {
             distances.put(currentNode, current.distance);
 
             // Explore neighbors
+            Map<Island, Double> neighbors = sea.getIsland(currentNode).getRoutes();
+            for (Map.Entry<Island, Double> entry : neighbors.entrySet()) {
+                Island neighborIsland = entry.getKey();
+                Double distance = entry.getValue();
+                double newDistance = current.distance + distance;
 
+                // Check capacity constraint and update if a shorter path is found
+                if (newDistance < distances.getOrDefault(neighborIsland.getName(), Double.POSITIVE_INFINITY)) {
+                    distances.put(neighborIsland.getName(), newDistance);
+                    previousNodes.put(neighborIsland.getName(), currentNode);
+                    pq.add(new NodeDistance(neighborIsland.getName(), newDistance, distance));
+                }
+            }
         }
 
+        // Allocate resources based on shortest paths and capacities
+        double availableResource = sourceIsland.getResources().get(resourceName);
+        for (Map.Entry<String, Double> entry : distances.entrySet()) {
+            String islandName = entry.getKey();
+            if (islandName.equals(sourceIsland.getName())) continue;
+
+            Island targetIsland = sea.getIsland(islandName);
+            double pathCapacity = getPathCapacity(sea, previousNodes, islandName, resourceName);
+            double amountToAllocate = Math.min(availableResource, pathCapacity);
+
+            if (amountToAllocate > 0) {
+                availableResource -= amountToAllocate;
+                targetIsland.addResources(resourceName, (int)amountToAllocate);
+                System.out.println("Allocated " + amountToAllocate + " " + resourceName + " to " + islandName);
+            }
+        }
     }
+    /**
+     * Calculates the maximum capacity of a path from source to target.
+     *
+     * @param graph      The graph representing island connections.
+     * @param previous   A map tracking the previous node in the shortest path.
+     * @param source     The starting island.
+     * @param target     The destination island.
+     * @return           The maximum capacity along this path.
+     */
+    public double getPathCapacity(Sea graph, Map<String, String> previous, String source, String target) {
+        double pathCapacity = Double.POSITIVE_INFINITY; // Initialize with max possible value
+
+        String currentIsland = target;
+        while (!currentIsland.equals(source)) {
+            String nextIsland = previous.get(currentIsland);
+            if (nextIsland == null) break; // No path found, or error in tracking
+
+            Double neighborCapacity = graph.getIsland(nextIsland).getRoutes().get(currentIsland);
+            // graph.getNeighbors(nextIsland).get(currentIsland);
+            if (neighborCapacity != null) {
+                pathCapacity = Math.min(pathCapacity, neighborCapacity);
+            }
+
+            currentIsland = nextIsland;
+        }
+
+        return pathCapacity == Double.POSITIVE_INFINITY ? 0 : pathCapacity; // Return calculated capacity or 0 if no path
+    }
+
     public class NodeDistance implements Comparable<NodeDistance> {
         public String islandName; // Name of the Island (Vertex)
         public double distance;    // Distance from the Source (for Dijkstra's)
@@ -103,5 +160,10 @@ public class ResourceDistribution {
         island3.addRoute(island1, 20);
         island3.addRoute(island2, 10);
         island3.addRoute(island4, 10);
+
+        island1.addResources("Resource1", 200);
+
+        ResourceDistribution distributor = new ResourceDistribution();
+        distributor.distributeResource(sea, island1, "Resource1");
     }
 }
