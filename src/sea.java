@@ -13,6 +13,9 @@ public class Sea {
     public void addIsland(String name, int population) {
         islands.put(name, new Island(name, population));
     }
+    public void addIsland(Island island) {
+        islands.put(island.getName(), island);
+    }
 
     // add route betwen two islands with travel times
     public void addRoute(String island1, String island2, double travelTime) {
